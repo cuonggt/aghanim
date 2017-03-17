@@ -62,12 +62,12 @@ EOF
 
 # Install Nginx & Passenger
 
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
-sudo apt-get install -y apt-transport-https ca-certificates
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+apt-get install -y apt-transport-https ca-certificates
 
 # Add Passenger APT repository
-sudo sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main > /etc/apt/sources.list.d/passenger.list'
-sudo apt-get update
+sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main > /etc/apt/sources.list.d/passenger.list'
+apt-get update
 
 apt-get install -y --force-yes nginx-extras passenger
 
@@ -177,7 +177,7 @@ sed -i "s/#START=yes/START=yes/" /etc/default/beanstalkd
 wget --quiet -O /usr/local/bin/mailhog https://github.com/mailhog/MailHog/releases/download/v0.2.1/MailHog_linux_amd64
 chmod +x /usr/local/bin/mailhog
 
-sudo tee /etc/systemd/system/mailhog.service <<EOL
+tee /etc/systemd/system/mailhog.service <<EOL
 [Unit]
 Description=Mailhog
 After=network.target
