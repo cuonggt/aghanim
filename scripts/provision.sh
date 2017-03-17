@@ -39,7 +39,8 @@ apt-get update
 # Install Some Basic Packages
 
 apt-get install -y build-essential dos2unix gcc git libmcrypt4 libpcre3-dev ntp unzip \
-make python2.7-dev python-pip re2c supervisor unattended-upgrades whois vim libnotify-bin
+make python2.7-dev python-pip re2c supervisor unattended-upgrades whois vim libnotify-bin \
+zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
 
 # Set My Timezone
 
@@ -47,16 +48,32 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 # Install Ruby Stuffs
 
-## TODO
+sudo su vagrant <<'EOF'
+git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+exec $SHELL
 
-# Install Gem
+git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+exec $SHELL
 
-## TODO
+rbenv install 2.4.0
+rbenv global 2.4.0
+EOF
 
-# Install Rails & Anything we need
+# Install Bundler
 
 sudo su vagrant <<'EOF'
+gem install bundler
+rbenv rehash
+EOF
 
+# Install Rails
+
+sudo su vagrant <<'EOF'
+gem install rails -v 5.0.1
+rbenv rehash
 EOF
 
 # Install Nginx
@@ -109,9 +126,7 @@ groups vagrant
 
 apt-get install -y nodejs
 /usr/bin/npm install -g gulp
-/usr/bin/npm install -g bower
 /usr/bin/npm install -g yarn
-/usr/bin/npm install -g grunt-cli
 
 # Install SQLite
 

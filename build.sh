@@ -9,7 +9,7 @@ rm -rf .vagrant
 
 time vagrant up --provider virtualbox 2>&1 | tee virtualbox-build-output.log
 vagrant halt
-vagrant package --base `ls ~/VirtualBox\ VMs | grep rubick` --output virtualbox.box
+vagrant package --base `ls ~/VirtualBox\ VMs | grep aghanim` --output virtualbox.box
 
 ls -lh virtualbox.box
 vagrant destroy -f
