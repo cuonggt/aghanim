@@ -40,45 +40,36 @@ apt-get update
 
 apt-get install -y build-essential dos2unix gcc git libmcrypt4 libpcre3-dev ntp unzip \
 make python2.7-dev python-pip re2c supervisor unattended-upgrades whois vim libnotify-bin \
-zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev \
+python-software-properties libffi-dev libgdbm-dev libncurses5-dev automake libtool bison
 
 # Set My Timezone
 
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
-# Install Ruby Stuffs
+# Install Ruby Stuffs & Bundler & Rails
 
 sudo su vagrant <<'EOF'
-git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-exec $SHELL
-
-git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
-echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
-exec $SHELL
-
-rbenv install 2.4.0
-rbenv global 2.4.0
-EOF
-
-# Install Bundler
-
-sudo su vagrant <<'EOF'
+gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+curl -sSL https://get.rvm.io | bash -s stable
+source ~/.rvm/scripts/rvm
+rvm install 2.4.0
+rvm use 2.4.0 --default
+ruby -v
 gem install bundler
-rbenv rehash
-EOF
-
-# Install Rails
-
-sudo su vagrant <<'EOF'
 gem install rails -v 5.0.1
-rbenv rehash
 EOF
 
-# Install Nginx
+# Install Nginx & Passenger
 
-apt-get install -y --force-yes nginx
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+sudo apt-get install -y apt-transport-https ca-certificates
+
+# Add Passenger APT repository
+sudo sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main > /etc/apt/sources.list.d/passenger.list'
+sudo apt-get update
+
+apt-get install -y --force-yes nginx-extras passenger
 
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
