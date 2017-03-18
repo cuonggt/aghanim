@@ -104,6 +104,10 @@ EOF
 
 sed -i "s/user www-data;/user vagrant;/" /etc/nginx/nginx.conf
 sed -i "s/# server_names_hash_bucket_size.*/server_names_hash_bucket_size 64;/" /etc/nginx/nginx.conf
+sed -i "s/# include \/etc\/nginx\/passenger.conf;/include \/etc\/nginx\/passenger.conf;/" /etc/nginx/nginx.conf
+
+# Config Passenger
+sed -i "s/passenger_ruby.*/passenger_ruby \/home\/vagrant\/.rvm\/wrappers\/ruby-2.4.0\/ruby;/" /etc/nginx/passenger.conf
 
 service nginx restart
 
