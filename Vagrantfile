@@ -3,7 +3,7 @@ VAGRANTFILE_API_VERSION = '2'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Configure The Box
   config.vm.box = 'bento/ubuntu-16.04'
-  config.vm.hostname = 'rubick'
+  config.vm.hostname = 'pybox'
 
   # Don't Replace The Default Key https://github.com/mitchellh/vagrant/pull/4707
   config.ssh.insert_key = false

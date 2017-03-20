@@ -39,26 +39,20 @@ apt-get update
 # Install Some Basic Packages
 
 apt-get install -y build-essential dos2unix gcc git libmcrypt4 libpcre3-dev ntp unzip \
-make python2.7-dev python-pip re2c supervisor unattended-upgrades whois vim libnotify-bin \
-zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev \
+make re2c supervisor unattended-upgrades whois vim libnotify-bin zlib1g-dev libssl-dev \
+libreadline-dev libyaml-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev \
 python-software-properties libffi-dev libgdbm-dev libncurses5-dev automake libtool bison
 
 # Set My Timezone
 
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
-# Install Ruby Stuffs & Bundler & Rails
+# Install Python Stuffs
 
-sudo su vagrant <<'EOF'
-gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-curl -sSL https://get.rvm.io | bash -s stable
-source ~/.rvm/scripts/rvm
-rvm install 2.4.0
-rvm use 2.4.0 --default
-ruby -v
-gem install bundler
-gem install rails -v 5.0.1
-EOF
+apt-get install -y python2.7-dev python-pip python3.5-dev python3-pip python-mysqldb
+
+pip install virtualenv
+pip3 install virtualenv
 
 # Install Nginx & Passenger
 
@@ -104,10 +98,8 @@ EOF
 
 sed -i "s/user www-data;/user vagrant;/" /etc/nginx/nginx.conf
 sed -i "s/# server_names_hash_bucket_size.*/server_names_hash_bucket_size 64;/" /etc/nginx/nginx.conf
-sed -i "s/# include \/etc\/nginx\/passenger.conf;/include \/etc\/nginx\/passenger.conf;/" /etc/nginx/nginx.conf
 
 # Config Passenger
-sed -i "s/passenger_ruby.*/passenger_ruby \/home\/vagrant\/.rvm\/wrappers\/ruby-2.4.0\/ruby;/" /etc/nginx/passenger.conf
 
 service nginx restart
 
@@ -144,11 +136,11 @@ sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/m
 mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO root@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
 service mysql restart
 
-mysql --user="root" --password="secret" -e "CREATE USER 'rubick'@'0.0.0.0' IDENTIFIED BY 'secret';"
-mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'rubick'@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
-mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'rubick'@'%' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
+mysql --user="root" --password="secret" -e "CREATE USER 'pybox'@'0.0.0.0' IDENTIFIED BY 'secret';"
+mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'pybox'@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
+mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'pybox'@'%' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
 mysql --user="root" --password="secret" -e "FLUSH PRIVILEGES;"
-mysql --user="root" --password="secret" -e "CREATE DATABASE rubick character set UTF8mb4 collate utf8mb4_bin;"
+mysql --user="root" --password="secret" -e "CREATE DATABASE pybox character set UTF8mb4 collate utf8mb4_bin;"
 service mysql restart
 
 # Add Timezone Support To MySQL
@@ -163,8 +155,8 @@ apt-get install -y postgresql
 
 sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/9.5/main/postgresql.conf
 echo "host    all             all             10.0.2.2/32               md5" | tee -a /etc/postgresql/9.5/main/pg_hba.conf
-sudo -u postgres psql -c "CREATE ROLE rubick LOGIN UNENCRYPTED PASSWORD 'secret' SUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
-sudo -u postgres /usr/bin/createdb --echo --owner=rubick rubick
+sudo -u postgres psql -c "CREATE ROLE pybox LOGIN UNENCRYPTED PASSWORD 'secret' SUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
+sudo -u postgres /usr/bin/createdb --echo --owner=pybox pybox
 service postgresql restart
 
 # Install A Few Other Things
